@@ -16,12 +16,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 import argparse
+import sys
 
 import toolboks as tb
 
 
 def toolboks_config():
-    """Command line interface for toolboks.conf.read_config"""
+    """Command line interface for toolboks.config.read_config"""
     parser = argparse.ArgumentParser(description='Configuration file reader')
     parser.add_argument(
         'filename',
@@ -32,22 +33,22 @@ def toolboks_config():
     parser.add_argument(
         'section',
         type=str,
-        nargs='?',
         help='Section to read in configuration file'
     )
 
     parser.add_argument(
         'key',
         type=str,
-        nargs='?',
         help='Key to read from section in configuration file'
     )
 
-    section = None
-    value = None
-
     args = parser.parse_args()
-    conf = tb.read_config(args.filename)
+
+    try:
+        conf = tb.read_config(args.filename)
+    except FileNotFoundError:
+        print(f"Could not find specified configuration file: {args.filename}")
+        sys.exit(1)
 
     try:
         section = getattr(conf, args.section)
